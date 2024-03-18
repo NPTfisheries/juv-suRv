@@ -84,7 +84,7 @@ surv_df = rbind(noaa_df, npt_df) %>%
   filter(rel_site != "Total")
 
 # plot survival estimates
-surv_p = surv_df %>%
+surv_p1 = surv_df %>%
   ggplot(aes(x = brood_year,
              y = lgr_surv,
              color = life_stage)) +
@@ -102,10 +102,40 @@ surv_p = surv_df %>%
                                 "Smolt" = "#9932CC")) +
   theme_bw() +
   xlim(1992, 2022)
-surv_p
+surv_p1
 
 # save plot
 ggsave(filename = here("figures/survival_estimates.png"),
+       width = 14,
+       height = 11,
+       units = "in")
+
+# another plot
+surv_p2 = surv_df %>%
+  filter(life_stage == "Parr") %>%
+  ggplot(aes(x = brood_year,
+             y = lgr_surv,
+             color = rel_site,
+             shape = method)) +
+  geom_point(size = 3) +
+  labs(x = "Brood Year",
+       y = "Survival",
+       color = "Site") +
+  scale_shape_manual(values = c("RST" = 19,
+                                "Roving" = 1)) +
+  #scale_color_brewer(palette = "Set4") +
+  theme_classic() +
+  scale_x_continuous(breaks = unique(surv_df$brood_year),
+                     labels = unique(surv_df$brood_year),
+                     limits = c(min(surv_df$brood_year) - 1,
+                                max(surv_df$brood_year) + 1),
+                     expand = c(0, 0)) +
+  theme(axis.text.x = element_text(angle = -45, hjust = 0))
+  
+surv_p2
+
+# save plot
+ggsave(filename = here("figures/survival_estimates_2.png"),
        width = 14,
        height = 11,
        units = "in")
